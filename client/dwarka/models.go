@@ -7,3 +7,10 @@ type Building struct {
 	Lan         float64 `json:"lan"`
 	Description string  `json:"description"`
 }
+
+// Floor -
+type Floor struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Level       int    `json:"level"`
+}

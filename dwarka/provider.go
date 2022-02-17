@@ -17,20 +17,10 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("DWARKA_HOST", nil),
 			},
-			"username": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("DWARKA_USERNAME", nil),
-			},
-			"password": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc("DWARKA_PASSWORD", nil),
-			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"dwarka_building": resourceBuilding(),
+			"dwarka_floor":    resourceFloor(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

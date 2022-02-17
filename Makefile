@@ -4,7 +4,7 @@ NAMESPACE=jskswamy
 NAME=dwarka
 BINARY=terraform-provider-${NAME}
 OS_ARCH=darwin_amd64
-VERSION=0.1.0
+VERSION=0.1.1
 
 default: install
 
