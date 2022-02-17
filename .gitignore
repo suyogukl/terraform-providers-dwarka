@@ -5,7 +5,7 @@ vendor
 
 # Local .terraform directories
 **/.terraform/*
-example/.terraform.lock.hcl
+**/.terraform.lock.hcl
 
 # .tfstate files
 *.tfstate
