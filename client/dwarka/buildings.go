@@ -50,7 +50,7 @@ func (c *Client) GetBuilding(buildingID string) (*Building, error) {
 }
 
 // CreateBuilding - Create new building
-func (c *Client) CreateBuilding(building Building) (*Building, error) {
+func (c *Client) CreateBuilding(building Building) (*string, error) {
 	rb, err := json.Marshal(building)
 	if err != nil {
 		return nil, err
@@ -61,12 +61,19 @@ func (c *Client) CreateBuilding(building Building) (*Building, error) {
 		return nil, err
 	}
 
-	_, err = c.doRequest(req)
+	body, err := c.doRequest(req)
 	if err != nil {
 		return nil, err
 	}
 
-	return &building, nil
+	result := map[string]string{}
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	id := result["id"]
+	return &id, nil
 }
 
 func (c *Client) UpdateBuilding(buildingID string, building Building) (*Building, error) {

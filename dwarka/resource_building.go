@@ -34,9 +34,6 @@ func resourceBuilding() *schema.Resource {
 				Required: true,
 			},
 		},
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
 	}
 }
 
@@ -53,12 +50,12 @@ func resourceBuildingCreate(ctx context.Context, d *schema.ResourceData, m inter
 		Description: d.Get("description").(string),
 	}
 
-	b, err := c.CreateBuilding(building)
+	buildingID, err := c.CreateBuilding(building)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(b.Name)
+	d.SetId(*buildingID)
 
 	resourceBuildingRead(ctx, d, m)
 
@@ -71,16 +68,13 @@ func resourceBuildingRead(ctx context.Context, d *schema.ResourceData, m interfa
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	orderID := d.Id()
+	buildingID := d.Id()
 
-	building, err := c.GetBuilding(orderID)
+	building, err := c.GetBuilding(buildingID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if err := d.Set("name", building.Name); err != nil {
-		return diag.FromErr(err)
-	}
 	if err := d.Set("lat", building.Lat); err != nil {
 		return diag.FromErr(err)
 	}
@@ -101,7 +95,7 @@ func resourceBuildingUpdate(ctx context.Context, d *schema.ResourceData, m inter
 
 	if d.HasChanges("name", "lat", "lan", "description") {
 		building := dwarka.Building{
-			Name:        d.Get("name").(string),
+			Name:        d.Id(),
 			Lat:         d.Get("lat").(float64),
 			Lan:         d.Get("lan").(float64),
 			Description: d.Get("description").(string),
