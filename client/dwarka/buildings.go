@@ -61,7 +61,7 @@ func (c *Client) CreateBuilding(building Building) (*string, error) {
 		return nil, err
 	}
 
-	body, err := c.doRequest(req)
+	body, err := c.doRequest(req, http.StatusCreated)
 	if err != nil {
 		return nil, err
 	}
