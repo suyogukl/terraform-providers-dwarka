@@ -93,7 +93,7 @@ func resourceBuildingUpdate(ctx context.Context, d *schema.ResourceData, m inter
 
 	buildingID := d.Id()
 
-	if d.HasChanges("name", "lat", "lan", "description") {
+	if d.HasChanges("lat", "lan", "description") {
 		building := dwarka.Building{
 			Name:        d.Id(),
 			Lat:         d.Get("lat").(float64),

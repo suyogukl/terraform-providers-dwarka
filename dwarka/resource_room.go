@@ -10,14 +10,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceFloor() *schema.Resource {
+func resourceRoom() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceFloorCreate,
-		ReadContext:   resourceFloorRead,
-		UpdateContext: resourceFloorUpdate,
-		DeleteContext: resourceFloorDelete,
+		CreateContext: resourceRoomCreate,
+		ReadContext:   resourceRoomRead,
+		UpdateContext: resourceRoomUpdate,
+		DeleteContext: resourceRoomDelete,
 		Schema: map[string]*schema.Schema{
 			"building_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"floor_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -29,101 +33,107 @@ func resourceFloor() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"level": {
-				Type:     schema.TypeInt,
+			"direction": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
 		},
 	}
 }
 
-func resourceFloorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoomCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 	buildingID := d.Get("building_id").(string)
+	floorID := d.Get("floor_id").(string)
 
-	floor := dwarka.Floor{
+	room := dwarka.Room{
 		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
-		Level:       d.Get("level").(int),
+		Direction:   d.Get("direction").(string),
 	}
 
-	floorID, err := c.CreateFloor(buildingID, floor)
+	roomID, err := c.CreateRoom(buildingID, floorID, room)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(*floorID)
+	d.SetId(*roomID)
 	d.Set("building_id", buildingID)
+	d.Set("floor_id", floorID)
 
-	resourceFloorRead(ctx, d, m)
+	resourceRoomRead(ctx, d, m)
 
 	return diags
 }
 
-func resourceFloorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoomRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	floorID := d.Id()
+	roomID := d.Id()
 	buildingID := d.Get("building_id").(string)
+	floorID := d.Get("floor_id").(string)
 
-	floor, err := c.GetFloor(buildingID, floorID)
+	room, err := c.GetRoom(buildingID, floorID, roomID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if err := d.Set("name", floor.Name); err != nil {
+	if err := d.Set("name", room.Name); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("description", floor.Description); err != nil {
+	if err := d.Set("description", room.Description); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("level", floor.Level); err != nil {
+	if err := d.Set("direction", room.Direction); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 
-func resourceFloorUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoomUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
-	floorID := d.Id()
+	roomID := d.Id()
 	buildingID := d.Get("building_id").(string)
+	floorID := d.Get("floor_id").(string)
 
-	if d.HasChanges("level", "description") {
-		floor := dwarka.Floor{
+	if d.HasChanges("direction", "description") {
+		room := dwarka.Room{
 			Name:        d.Id(),
-			Level:       d.Get("level").(int),
+			Direction:   d.Get("direction").(string),
 			Description: d.Get("description").(string),
 		}
 
-		_, err := c.UpdateFloor(buildingID, floorID, floor)
+		_, err := c.UpdateRoom(buildingID, floorID, roomID, room)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
 		d.Set("building_id", buildingID)
+		d.Set("floor_id", buildingID)
 		d.Set("last_updated", time.Now().Format(time.RFC850))
 	}
 
-	return resourceFloorRead(ctx, d, m)
+	return resourceRoomRead(ctx, d, m)
 }
 
-func resourceFloorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoomDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	floorID := d.Id()
+	roomID := d.Id()
 	buildingID := d.Get("building_id").(string)
+	floorID := d.Get("floor_id").(string)
 
-	err := c.DeleteFloor(buildingID, floorID)
+	err := c.DeleteRoom(buildingID, floorID, roomID)
 	if err != nil {
 		return diag.FromErr(err)
 	}

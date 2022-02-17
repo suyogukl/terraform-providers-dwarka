@@ -14,3 +14,10 @@ type Floor struct {
 	Description string `json:"description"`
 	Level       int    `json:"level"`
 }
+
+// Room -
+type Room struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Direction   string `json:"direction"`
+}
