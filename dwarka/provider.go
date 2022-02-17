@@ -21,6 +21,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"dwarka_building": resourceBuilding(),
 			"dwarka_floor":    resourceFloor(),
+			"dwarka_room":     resourceRoom(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
