@@ -61,7 +61,7 @@ func (c *Client) CreateFloor(buildingID string, floor Floor) (*string, error) {
 		return nil, err
 	}
 
-	body, err := c.doRequest(req)
+	body, err := c.doRequest(req, http.StatusCreated)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +101,6 @@ func (c *Client) DeleteFloor(buildingID, floorID string) error {
 		return err
 	}
 
-	_, err = c.doRequest(req)
+	_, err = c.doRequest(req, http.StatusNotFound)
 	return err
 }

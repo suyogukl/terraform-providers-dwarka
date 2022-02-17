@@ -31,7 +31,8 @@ func NewClient(host *string) (*Client, error) {
 	return &c, nil
 }
 
-func (c *Client) doRequest(req *http.Request) ([]byte, error) {
+func (c *Client) doRequest(req *http.Request, expectedStatusCodes ...int) ([]byte, error) {
+	expectedStatusCodes = append(expectedStatusCodes, http.StatusOK)
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -45,8 +46,10 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 
 	statusCode := res.StatusCode
 
-	if (statusCode == http.StatusOK) || (statusCode == http.StatusCreated) {
-		return body, err
+	for _, expectedStatusCode := range expectedStatusCodes {
+		if statusCode == expectedStatusCode {
+			return body, err
+		}
 	}
 	return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 }

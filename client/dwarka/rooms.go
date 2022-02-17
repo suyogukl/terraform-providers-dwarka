@@ -61,7 +61,7 @@ func (c *Client) CreateRoom(buildingID, floorID string, room Room) (*string, err
 		return nil, err
 	}
 
-	body, err := c.doRequest(req)
+	body, err := c.doRequest(req, http.StatusCreated)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +101,6 @@ func (c *Client) DeleteRoom(buildingID, floorID, roomID string) error {
 		return err
 	}
 
-	_, err = c.doRequest(req)
+	_, err = c.doRequest(req, http.StatusNotFound)
 	return err
 }
