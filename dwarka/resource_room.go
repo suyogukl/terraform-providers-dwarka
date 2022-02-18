@@ -69,8 +69,12 @@ func resourceRoomCreate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	d.SetId(*roomID)
-	d.Set("building_id", buildingID)
-	d.Set("floor_id", floorID)
+	if err := d.Set("building_id", buildingID); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("floor_id", floorID); err != nil {
+		return diag.FromErr(err)
+	}
 
 	resourceRoomRead(ctx, d, m)
 
@@ -139,15 +143,21 @@ func resourceRoomUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.FromErr(err)
 		}
 
-		d.Set("building_id", buildingID)
-		d.Set("floor_id", buildingID)
-		d.Set("last_updated", time.Now().Format(time.RFC850))
+		if err := d.Set("building_id", buildingID); err != nil {
+			return diag.FromErr(err)
+		}
+		if err := d.Set("floor_id", floorID); err != nil {
+			return diag.FromErr(err)
+		}
+		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return resourceRoomRead(ctx, d, m)
 }
 
-func resourceRoomDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoomDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type

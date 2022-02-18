@@ -66,7 +66,7 @@ func resourceBuildingCreate(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
-func resourceBuildingRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceBuildingRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type
@@ -79,6 +79,9 @@ func resourceBuildingRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 
+	if err := d.Set("name", building.Name); err != nil {
+		return diag.FromErr(err)
+	}
 	if err := d.Set("lat", building.Lat); err != nil {
 		return diag.FromErr(err)
 	}
@@ -110,13 +113,15 @@ func resourceBuildingUpdate(ctx context.Context, d *schema.ResourceData, m inter
 			return diag.FromErr(err)
 		}
 
-		d.Set("last_updated", time.Now().Format(time.RFC850))
+		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return resourceBuildingRead(ctx, d, m)
 }
 
-func resourceBuildingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceBuildingDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type
