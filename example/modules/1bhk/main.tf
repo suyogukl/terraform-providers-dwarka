@@ -7,7 +7,7 @@ resource "dwarka_building" "main" {
 
 resource "dwarka_floor" "ground" {
   building_id = dwarka_building.main.id
-  name        = "ground floor"
+  name        = var.floor_name
   description = "from terraform"
   level       = 1
 }
@@ -23,15 +23,15 @@ resource "dwarka_room" "hall" {
 resource "dwarka_room" "kitchen" {
   building_id = dwarka_building.main.id
   floor_id    = dwarka_floor.ground.id
-  name        = "main room"
+  name        = "kitchen"
   description = "from terraform"
   direction   = "south"
 }
 
-resource "dwarka_room" "bedroom_1" {
+resource "dwarka_room" "bedroom_master" {
   building_id = dwarka_building.main.id
   floor_id    = dwarka_floor.ground.id
-  name        = "first bedroom"
+  name        = "master bedroom"
   description = "from terraform"
   direction   = "south"
 }
