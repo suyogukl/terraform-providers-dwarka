@@ -2,10 +2,12 @@ package dwarka
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"terraform-provider-dwarka/client/dwarka"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -16,6 +18,9 @@ func resourceRoom() *schema.Resource {
 		ReadContext:   resourceRoomRead,
 		UpdateContext: resourceRoomUpdate,
 		DeleteContext: resourceRoomDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"building_id": {
 				Type:     schema.TypeString,
@@ -82,11 +87,27 @@ func resourceRoomRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	buildingID := d.Get("building_id").(string)
 	floorID := d.Get("floor_id").(string)
 
+	ids := strings.Split(roomID, ".")
+	if len(ids) == 3 {
+		buildingID = ids[0]
+		floorID = ids[1]
+		roomID = ids[2]
+	}
+
 	room, err := c.GetRoom(buildingID, floorID, roomID)
+	tflog.Debug(ctx, "fetching room details", "room id", roomID, "building id", buildingID, "floor id", floorID)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
+	d.SetId(roomID)
+	if err := d.Set("building_id", buildingID); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("floor_id", floorID); err != nil {
+		return diag.FromErr(err)
+	}
 	if err := d.Set("name", room.Name); err != nil {
 		return diag.FromErr(err)
 	}

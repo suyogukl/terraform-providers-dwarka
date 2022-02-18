@@ -16,6 +16,9 @@ func resourceBuilding() *schema.Resource {
 		ReadContext:   resourceBuildingRead,
 		UpdateContext: resourceBuildingUpdate,
 		DeleteContext: resourceBuildingDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
