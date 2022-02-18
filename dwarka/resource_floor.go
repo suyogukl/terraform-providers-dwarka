@@ -63,7 +63,9 @@ func resourceFloorCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 
 	d.SetId(*floorID)
-	d.Set("building_id", buildingID)
+	if err := d.Set("building_id", buildingID); err != nil {
+		return diag.FromErr(err)
+	}
 
 	resourceFloorRead(ctx, d, m)
 
@@ -126,14 +128,18 @@ func resourceFloorUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.FromErr(err)
 		}
 
-		d.Set("building_id", buildingID)
-		d.Set("last_updated", time.Now().Format(time.RFC850))
+		if err := d.Set("building_id", buildingID); err != nil {
+			return diag.FromErr(err)
+		}
+		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return resourceFloorRead(ctx, d, m)
 }
 
-func resourceFloorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceFloorDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*dwarka.Client)
 
 	// Warning or errors can be collected in a slice type
