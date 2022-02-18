@@ -1,5 +1,5 @@
 module "apartments" {
-  source                = "../../apartments"
+  source                = "../../modules/apartments"
   name                  = "block a"
   no_of_1bhk_apartments = 10
   no_of_2bhk_apartments = 0

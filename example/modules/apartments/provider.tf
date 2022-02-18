@@ -6,3 +6,7 @@ terraform {
     }
   }
 }
+
+provider "dwarka" {
+  host = "http://localhost:1410"
+}
