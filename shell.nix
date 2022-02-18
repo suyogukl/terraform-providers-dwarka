@@ -3,5 +3,6 @@
 pkgs.mkShell {
   buildInputs = [
     pkgs.terraform
+    pkgs.terragrunt
   ];
 }
