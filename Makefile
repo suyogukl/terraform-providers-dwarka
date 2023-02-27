@@ -3,7 +3,9 @@ HOSTNAME=github.com
 NAMESPACE=jskswamy
 NAME=dwarka
 BINARY=terraform-provider-${NAME}
-OS_ARCH=darwin_amd64
+GOHOSTOS?=$(shell (go env | grep 'GOHOSTOS' | awk -F'=' '{print $$2}'))
+GOHOSTARCH?=$(shell (go env | grep 'GOHOSTARCH' | awk -F'=' '{print $$2}'))
+OS_ARCH?=$(GOHOSTOS)_$(GOHOSTARCH)
 VERSION=0.1.1
 
 default: install
