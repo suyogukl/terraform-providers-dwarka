@@ -1,5 +1,5 @@
 resource "dwarka_building" "main" {
-  name        = "basic building"
+  name        = var.building_name
   description = "from terraform"
   lat         = 13.0827
   lan         = 80.2707
@@ -7,7 +7,7 @@ resource "dwarka_building" "main" {
 
 resource "dwarka_floor" "ground" {
   building_id = dwarka_building.main.id
-  name        = "ground floor"
+  name        = var.floor_name
   description = "from terraform"
   level       = 1
 }
